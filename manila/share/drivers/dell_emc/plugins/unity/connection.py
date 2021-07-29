@@ -42,9 +42,10 @@ from manila import utils
      7.0.1 - Fix parsing management IPv6 address
      7.0.2 - Bugfix: failed to delete CIFS share if wrong access was set
      7.0.3 - Bugfix: remove enable ace process when creating cifs share
+     7.0.4 - Bugfix: ignore the has snaps error when deleting filesystem
 """
 
-VERSION = "7.0.3"
+VERSION = "7.0.4"
 
 LOG = log.getLogger(__name__)
 SUPPORTED_NETWORK_TYPES = (None, 'flat', 'vlan')
@@ -282,7 +283,11 @@ class UnityStorageConnection(driver.StorageConnection):
             self.client.delete_share(backend_share)
 
         if self._is_isolated_filesystem(filesystem):
-            self.client.delete_filesystem(filesystem)
+            try:
+                self.client.delete_filesystem(filesystem)
+            except storops_ex.UnityDeleteStorageResourceHasSnapError:
+                LOG.info("Filesystem %s has one or more snapshots, "
+                         "ignore it.", filesystem.name)
 
     def extend_share(self, share, new_size, share_server=None):
         backend_share = self.client.get_share(share['id'],
