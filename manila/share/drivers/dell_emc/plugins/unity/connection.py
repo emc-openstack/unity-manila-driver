@@ -43,9 +43,10 @@ from manila import utils
      7.0.2 - Bugfix: failed to delete CIFS share if wrong access was set
      7.0.3 - Bugfix: remove enable ace process when creating cifs share
      7.0.4 - Bugfix: ignore the has snaps error when deleting filesystem
+     7.0.5 - Bugfix: fix the driver startup issue with LACP ports configured
 """
 
-VERSION = "7.0.4"
+VERSION = "7.0.5"
 
 LOG = log.getLogger(__name__)
 SUPPORTED_NETWORK_TYPES = (None, 'flat', 'vlan')
